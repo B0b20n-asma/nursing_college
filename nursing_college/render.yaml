@@ -1,0 +1,30 @@
+
+
+services:
+  - type: web
+    name: nursing-college
+    runtime: python
+    region: frankfurt  # choose your closest region
+    plan: free         # or starter/professional
+    buildCommand: |
+      pip install -r requirements.txt
+      python manage.py collectstatic --noinput
+    startCommand: gunicorn nursing_college.wsgi:application --bind 0.0.0.0:$PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.4
+      - key: DJANGO_SETTINGS_MODULE
+        value: nursing_college.settings
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      # Point DB & media to the disk mount path (defined below)
+      - key: DB_PATH
+        value: /var/data/db.sqlite3
+      - key: MEDIA_ROOT
+        value: /var/data/media
+    disk:
+      name: nursing-data
+      mountPath: /var/data
+      sizeGB: 1

@@ -1,0 +1,51 @@
+
+
+
+{% extends 'college_db/base.html' %}
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center">
+  <div class="card p-4" style="max-width:420px; width:100%;">
+    <h4 class="mb-3">Sign in</h4>
+
+    {% if messages %}
+      {% for msg in messages %}
+        <div class="alert alert-{{ msg.tags }}">{{ msg }}</div>
+      {% endfor %}
+    {% endif %}
+
+    {% if error %}
+      <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+
+    <form method="post" action="?next={{ request.GET.next|urlencode }}">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label class="form-label">Username</label>
+        <input type="text" name="username" class="form-control" required autofocus
+               value="{{ username_prefill }}">
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Password</label>
+        <input type="password" name="password" class="form-control" required>
+      </div>
+
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+          <button class="btn btn-primary" type="submit"><i class="fas fa-sign-in-alt"></i> Login</button>
+        </div>
+        <small class="text-muted">
+          {% comment %}Only show signup link if you implement signup_view and route{% endcomment %}
+          <a href="{% url 'signup' %}">Sign up</a>
+        </small>
+      </div>
+    </form>
+
+    <div class="text-muted small">
+      If you do not have an account, create one via the admin or use Sign up (if enabled).
+    </div>
+  </div>
+</div>
+{% endblock %}

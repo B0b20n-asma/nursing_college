@@ -1,0 +1,83 @@
+
+
+{% extends 'college_db/base.html' %}
+{% block title %}Attendance Records{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('[data-bs-toggle="collapse"]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      const icon = this.querySelector('.toggle-icon');
+      const target = document.querySelector(this.getAttribute('data-bs-target'));
+      setTimeout(() => {
+        if (target.classList.contains('show')) {
+          icon.classList.remove('fa-plus-circle'); icon.classList.add('fa-minus-circle');
+        } else {
+          icon.classList.remove('fa-minus-circle'); icon.classList.add('fa-plus-circle');
+        }
+      }, 150);
+    });
+  });
+});
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h3>Attendance Records</h3>
+</div>
+
+<div class="mb-3">
+  <a href="{% url 'add_attendance' %}" class="btn btn-primary"><i class="fas fa-plus"></i> Add Attendance</a>
+</div>
+
+<div class="card p-3">
+  <div class="table-responsive">
+    <table class="table align-middle">
+      <thead>
+        <tr>
+          <th>Student</th>
+          <th>Course</th>
+          <th>Date</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for a in attendances %}
+        <tr>
+          <td>{{ a.student.first_name }} {{ a.student.last_name }}</td>
+          <td>{{ a.course.name }}</td>
+          <td>{{ a.date|date:"j M Y" }}</td>
+          <td>{% if a.present %}Present{% else %}Absent{% endif %}</td>
+          <td>
+            <a href="{% url 'view_attendance' a.id %}" class="btn btn-sm btn-light">Open</a>
+            <button class="btn btn-sm btn-info" data-bs-toggle="collapse" data-bs-target="#attendanceDetails{{ a.id }}">
+              <i class="fas fa-plus-circle toggle-icon"></i> Details
+            </button>
+            <a href="{% url 'edit_attendance' a.id %}" class="btn btn-sm btn-success">Edit</a>
+            <a href="{% url 'delete_attendance' a.id %}" class="btn btn-sm btn-danger">Delete</a>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="5" class="p-0">
+            <div class="collapse" id="attendanceDetails{{ a.id }}">
+              <div class="card card-body">
+                <p><strong>Student:</strong> {{ a.student.first_name }} {{ a.student.last_name }}</p>
+                <p><strong>Course:</strong> {{ a.course.name }}</p>
+                <p><strong>Date:</strong> {{ a.date|date:"j M Y" }}</p>
+                <p><strong>Status:</strong> {% if a.present %}Present{% else %}Absent{% endif %}</p>
+                <p><strong>Notes:</strong> {{ a.note|default:"-" }}</p>
+              </div>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" class="text-center text-muted">No attendance records found.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

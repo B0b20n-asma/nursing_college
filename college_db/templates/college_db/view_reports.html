@@ -1,0 +1,78 @@
+
+
+{% extends 'college_db/base.html' %}
+{% block title %}Reports{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('[data-bs-toggle="collapse"]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      const icon = this.querySelector('.toggle-icon');
+      const target = document.querySelector(this.getAttribute('data-bs-target'));
+      setTimeout(() => {
+        if (target.classList.contains('show')) {
+          icon.classList.remove('fa-plus-circle'); icon.classList.add('fa-minus-circle');
+        } else {
+          icon.classList.remove('fa-minus-circle'); icon.classList.add('fa-plus-circle');
+        }
+      }, 150);
+    });
+  });
+});
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h3>Reports</h3>
+</div>
+
+<div class="mb-3">
+  <a href="{% url 'add_report' %}" class="btn btn-primary"><i class="fas fa-plus"></i> Add Report</a>
+</div>
+
+<div class="card p-3">
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Created_by</th>
+        <th>created_at</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in reports %}
+      <tr>
+        <td>{{ r.title }}</td>
+        <td>{{ r.created_by }}</td>
+        <td>{{ r.created_at|date:"j M Y" }}</td>
+        <td>
+          <a href="{% url 'view_report' r.id %}" class="btn btn-sm btn-light">Open</a>
+          <button class="btn btn-sm btn-info" data-bs-toggle="collapse" data-bs-target="#reportDetails{{ r.id }}">
+            <i class="fas fa-plus-circle toggle-icon"></i> Details
+          </button>
+          <a href="{% url 'edit_report' r.id %}" class="btn btn-sm btn-success">Edit</a>
+          <a href="{% url 'delete_report' r.id %}" class="btn btn-sm btn-danger">Delete</a>
+        </td>
+      </tr>
+      <tr>
+        <td colspan="4" class="p-0">
+          <div class="collapse" id="reportDetails{{ r.id }}">
+            <div class="card card-body">
+              <p><strong>Title:</strong> {{ r.title }}</p>
+              <p><strong>Created_by:</strong> {{ r.created_by}}</p>
+              <p><strong>created_at:</strong> {{ r.created_at|date:"j M Y" }}</p>
+              <p><strong>Content:</strong> {{ r.content|default:"-" }}</p>
+            </div>
+          </div>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="4" class="text-center text-muted">No reports found.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

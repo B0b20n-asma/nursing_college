@@ -1,0 +1,19 @@
+
+
+{% extends 'college_db/base.html' %}
+{% block title %}Add Report{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h3>Add Report</h3>
+</div>
+
+<div class="card p-3">
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn btn-primary"><i class="fas fa-save"></i> Save Report</button>
+    <a href="{% url 'view_reports' %}" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+{% endblock %}

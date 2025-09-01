@@ -1,0 +1,32 @@
+
+
+{% extends 'college_db/base.html' %}
+{% block title %}Course Details{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h3>{{ course.code }} — {{ course.name }}</h3>
+</div>
+
+<div class="row">
+  <div class="col-md-4">
+    <div class="card p-3">
+      <p><strong>Code:</strong> {{ course.code }}</p>
+      <p><strong>Department:</strong> {{ course.department }}</p>
+      <p><strong>Credit Units:</strong> {{ course.credit_units }}</p>
+      <a href="{% url 'edit_course' course.id %}" class="btn btn-success">Edit</a>
+      <a href="{% url 'delete_course' course.id %}" class="btn btn-danger">Delete</a>
+    </div>
+  </div>
+
+  <div class="col-md-8">
+    <div class="card p-3">
+      <h5>Description</h5>
+      <p>{{ course.description|default:"No description provided." }}</p>
+      <hr>
+      <h6>Enrollments</h6>
+      <p class="text-muted">List of enrolled students will go here (if you add a view).</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

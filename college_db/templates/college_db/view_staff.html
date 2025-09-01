@@ -1,0 +1,37 @@
+
+
+{% extends 'college_db/base.html' %}
+{% block title %}Staff Details{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h3>{{ staff.first_name }} {{ staff.last_name }}</h3>
+  <small class="text-muted">{{ staff.role }}</small>
+</div>
+
+<div class="row">
+  <div class="col-md-4">
+    <div class="card p-3">
+      <p><strong>Role:</strong> {{ staff.role }}</p>
+      <p><strong>Department:</strong> {{ staff.department }}</p>
+      <p><strong>Phone:</strong> {{ staff.phone|default:"-" }}</p>
+      <p><strong>Email:</strong> {{ staff.email|default:"-" }}</p>
+      <p><strong>Status:</strong> {{ staff.status|capfirst }}</p>
+      <p><strong>Date Joined:</strong> {{ staff.date_joined|date:"j M Y" }}</p>
+      <a href="{% url 'edit_staff' staff.id %}" class="btn btn-success">Edit</a>
+      <a href="{% url 'delete_staff' staff.id %}" class="btn btn-danger">Delete</a>
+    </div>
+  </div>
+
+  <div class="card p-3">
+  <h5>Profile & Activities</h5>
+  <p><strong>College:</strong> {{ staff.college.name }}</p>
+  <p><strong>Department:</strong> {{ staff.department.name }}</p>
+  <p><strong>Qualifications:</strong> {{ staff.qualifications|default:"-" }}</p>
+  <p><strong>Timetable:</strong> {{ staff.timetable|default:"Not available" }}</p>
+  <p><strong>Assigned Courses:</strong> {{ staff.assigned_courses|default:"None" }}</p>
+  <p><strong>Notes:</strong> {{ staff.notes|default:"-" }}</p>
+</div>
+  </div>
+</div>
+{% endblock %}

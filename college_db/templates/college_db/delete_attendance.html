@@ -1,0 +1,19 @@
+
+
+{% extends 'college_db/base.html' %}
+{% block title %}Delete Attendance{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h3>Delete Attendance Record</h3>
+</div>
+
+<div class="card p-3">
+  <p>Are you sure you want to delete the attendance record for <strong>{{ attendance.student.first_name }} {{ attendance.student.last_name }}</strong> on <strong>{{ attendance.date|date:"j M Y" }}</strong>?</p>
+  <form method="post">
+    {% csrf_token %}
+    <button class="btn btn-danger">Yes, Delete</button>
+    <a href="{% url 'view_attendances' %}" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+{% endblock %}

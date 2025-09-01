@@ -1,0 +1,187 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title> College Management System - {% block title %}{% endblock %}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"> <!-- mobile scaling -->
+
+  <!-- Bootstrap & Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --primary: #3498db;
+      --secondary: #2ecc71;
+      --accent: #e74c3c;
+      --light: #f8f9fa;
+      --dark: #34495e;
+      --warning: #f39c12;
+      --info: #17a2b8;
+    }
+
+    body {
+      background-color: #f5f7fa;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .app-container { min-height:100vh; }
+
+    /* Sidebar */
+    .sidebar {
+      background: linear-gradient(135deg, var(--primary), #2980b9);
+      color: white;
+      height: 100vh;
+      padding-top: 20px;
+      box-shadow: 3px 0 10px rgba(0,0,0,0.08);
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 250px;
+      overflow-y: auto;
+      z-index: 1050;
+      transition: transform .3s ease;
+    }
+    .sidebar .brand {
+      padding: 0 1rem 1rem 1rem;
+      text-align:center;
+    }
+    .sidebar .nav-link {
+      color: rgba(255,255,255,.95);
+      padding: 12px 18px;
+      margin:6px 8px;
+      border-radius:6px;
+      transition: all .2s;
+    }
+    .sidebar .nav-link:hover{ background-color: rgba(255,255,255,.08); color: #fff; }
+    .sidebar .nav-link.active{ background-color: var(--secondary); color: #fff; }
+    .sidebar .nav-link i{ margin-right:10px; width:24px; text-align:center; }
+
+    /* Main content */
+    .main-content { margin-left: 250px; padding: 24px; transition: margin-left .3s ease; }
+    .page-header { border-left: 5px solid var(--primary); padding-left: 15px; margin-bottom: 25px; }
+
+    /* Cards */
+    .dashboard-card{
+      border-radius: 10px;
+      box-shadow: 0 6px 18px rgba(0,0,0,.06);
+      border:none;
+      margin-bottom:20px;
+      transition: transform .25s;
+    }
+    .dashboard-card:hover{ transform: translateY(-6px); }
+
+    /* Buttons & table */
+    .btn-primary{ background-color: var(--primary); border-color: var(--primary); }
+    .btn-success{ background-color: var(--secondary); border-color: var(--secondary); }
+    .btn-danger{ background-color: var(--accent); border-color: var(--accent); }
+    .table thead th{ background-color: var(--primary); color:#fff; }
+
+    /* Responsive */
+    @media (max-width: 991.98px){
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.show { transform: translateX(0); }
+      .main-content { margin-left: 0; padding: 16px; }
+    }
+  </style>
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+<div class="app-container">
+
+  <!-- Mobile Navbar -->
+  <nav class="navbar navbar-light bg-white shadow-sm d-lg-none">
+    <div class="container-fluid">
+      <button id="sidebarToggle" class="btn btn-outline-primary">
+        <i class="fas fa-bars"></i>
+      </button>
+      <span class="navbar-brand mb-0 h1 ms-2">College Management System</span>
+      <div>
+        {% if request.user.is_authenticated %}
+          <a class="btn btn-link" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i></a>
+        {% else %}
+          <a class="btn btn-link" href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i></a>
+        {% endif %}
+      </div>
+    </div>
+  </nav>
+
+  <div class="row g-0">
+
+    <!-- Sidebar -->
+    <aside id="primarySidebar" class="sidebar">
+      <div class="brand">
+        <h5 class="mb-1 btn-success">College Management System</h5>
+        <hr style="background-color: rgba(255,255,255,.2); margin: .5rem 1rem;">
+      </div>
+
+      <nav class="nav flex-column px-2 pb-4">
+        <a class="nav-link {% if request.path == '/dashboard/' %}active{% endif %}" href="{% url 'dashboard' %}">
+          <i class="fas fa-tachometer-alt"></i> Dashboard
+        </a>
+        <a class="nav-link {% if 'student' in request.path %}active{% endif %}" href="{% url 'view_students' %}">
+          <i class="fas fa-user-graduate"></i> Students
+        </a>
+        <a class="nav-link {% if 'staff' in request.path %}active{% endif %}" href="{% url 'view_staff' %}">
+          <i class="fas fa-chalkboard-teacher"></i> Staff
+        </a>
+        <a class="nav-link {% if 'course' in request.path %}active{% endif %}" href="{% url 'view_courses' %}">
+          <i class="fas fa-book"></i> Courses
+        </a>
+        <a class="nav-link {% if 'fee' in request.path %}active{% endif %}" href="{% url 'view_fees' %}">
+          <i class="fas fa-money-bill-wave"></i> Fees
+        </a>
+        <a class="nav-link {% if 'attendance' in request.path %}active{% endif %}" href="{% url 'view_attendances' %}">
+          <i class="fas fa-calendar-check"></i> Attendance
+        </a>
+        <a class="nav-link {% if 'report' in request.path %}active{% endif %}" href="{% url 'view_reports' %}">
+          <i class="fas fa-chart-bar"></i> Reports
+        </a>
+        <hr style="background-color: rgba(255,255,255,.2); margin: .75rem 0;">
+        {% if request.user.is_authenticated %}
+          <a class="nav-link" href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        {% else %}
+          <a class="nav-link" href="{% url 'login' %}"><i class="fas fa-sign-in-alt"></i> Login</a>
+        {% endif %}
+      </nav>
+    </aside>
+
+    <!-- Main content -->
+    <main class="main-content col">
+      {% block content %}
+        <div class="page-header mb-3">
+          <h3 class="m-0">{% block page_heading %}Dashboard{% endblock %}</h3>
+        </div>
+        <div class="row">
+          <div class="col-12">
+            <div class="card dashboard-card p-3">
+              <h5>Welcome</h5>
+              <p class="mb-0">Use this base template for pages inside the Nursing College admin app.</p>
+            </div>
+          </div>
+        </div>
+      {% endblock %}
+    </main>
+  </div>
+</div>
+
+<!-- JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  (function(){
+    const toggler = document.getElementById('sidebarToggle');
+    const sidebar = document.getElementById('primarySidebar');
+    if (toggler && sidebar) {
+      toggler.addEventListener('click', () => {
+        sidebar.classList.toggle('show');
+      });
+    }
+  })();
+</script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

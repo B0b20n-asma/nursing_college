@@ -1,0 +1,19 @@
+
+
+{% extends 'college_db/base.html' %}
+{% block title %}Edit Staff{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <h3>Edit {{ staff.first_name }} {{ staff.last_name }}</h3>
+</div>
+
+<div class="card p-3">
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn btn-success"><i class="fas fa-save"></i> Update</button>
+    <a href="{% url 'view_staff' %}" class="btn btn-secondary">Back</a>
+  </form>
+</div>
+{% endblock %}

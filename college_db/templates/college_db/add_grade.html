@@ -1,0 +1,16 @@
+
+
+{% extends 'college_db/base.html' %}
+{% block title %}Add Grade{% endblock %}
+{% block content %}
+<div class="page-header"><h3>Add Grade{% if student_id %} for student #{{ student_id }}{% endif %}</h3></div>
+<div class="card p-3">
+  <form method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    {{ form.as_p }}
+    <button class="btn btn-primary">Save Grade</button>
+    <a href="{% url 'view_grades' %}" class="btn btn-secondary">Cancel</a>
+  </form>
+</div>
+{% endblock %}
