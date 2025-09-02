@@ -13,6 +13,11 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.db.models import Prefetch
 from django.conf.urls.static import static
 
+from django.shortcuts import get_object_or_404
+from django.http import HttpResponse
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
+
 
 
 @login_required
@@ -480,4 +485,26 @@ def add_enrollment(request, student_id):
         'form': form,
         'student': student
     })
+
+def student_pdf(request, student_id):
+    student = get_object_or_404(Student, id=student_id)
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="student_{student.admission_number}.pdf"'
+
+    p = canvas.Canvas(response, pagesize=A4)
+    p.setFont("Helvetica-Bold", 14)
+    p.drawString(100, 800, f"Student Profile: {student.first_name} {student.last_name}")
+    p.setFont("Helvetica", 12)
+    p.drawString(100, 770, f"Admission: {student.admission_number}")
+    p.drawString(100, 750, f"Phone: {student.phone}")
+    p.drawString(100, 730, f"Email: {student.email}")
+    p.drawString(100, 710, f"Department: {student.department}")
+    p.drawString(100, 690, f"Academic Year: {student.academic_year}")
+    p.drawString(100, 670, f"Status: {student.status}")
+
+    p.showPage()
+    p.save()
+
+    return response
 
