@@ -21,12 +21,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-=hq$ln2vs&uianx*e!v5nexybn7@e8y*3p%#elj_q_&-8elg&$'
+SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "django-insecure-4d8f@#a5wz+1u(9v3h2n)3!q$%e7y!p0r=ubk8l2@-w*skl@")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DEBUG", "False") == "True"
+DEBUG = os.getenv("DEBUG", "True") == "True"
 
-ALLOWED_HOSTS =  ["*"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", ".onrender.com", ".pythonanywhere.com"]
 
 
 # Application definition
@@ -78,11 +78,9 @@ WSGI_APPLICATION = 'nursing_college.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        # Accept both string path and Path object:
         "NAME": BASE_DIR / "db.sqlite3",
     }
-}
-
+ }
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
