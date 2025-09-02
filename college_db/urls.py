@@ -62,6 +62,7 @@ path('grades/<int:grade_id>/edit/', views.edit_grade, name='edit_grade'),
 path('grades/<int:grade_id>/delete/', views.delete_grade, name='delete_grade'),
 path('students/<int:student_id>/grades/', views.student_grades, name='student_grades'),
 path('students/<int:student_id>/enroll/', views.add_enrollment, name='add_enrollment'),
+path('<int:pk>/pdf/', views.student_pdf, name='student_pdf'),
 
    
 ]
