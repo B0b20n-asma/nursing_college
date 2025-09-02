@@ -115,12 +115,18 @@ LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'dashboard'
 LOGOUT_REDIRECT_URL = 'login'
 
-MEDIA_URL = '/media/'
+
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DB_PATH = os.environ.get("DB_PATH", BASE_DIR / "db.sqlite3")
 MEDIA_ROOT = os.environ.get("MEDIA_ROOT", BASE_DIR / "media")
-MEDIA_URL = "/media/"
+
+MEDIA_URL = '/media/'
+if "RENDER" in os.environ:
+    MEDIA_ROOT = "/var/data/media"
+else:
+    MEDIA_ROOT = BASE_DIR / "media"
+os.makedirs(MEDIA_ROOT, exist_ok=True)  # ensure folder exists
 
 
 
@@ -129,6 +135,15 @@ MEDIA_URL = "/media/"
 
 # Static files
 STATIC_URL = "/static/"
+
+STATIC_URL = '/static/'
+if "RENDER" in os.environ:
+    STATIC_ROOT = "/var/data/static"
+else:
+    STATIC_ROOT = BASE_DIR / "staticfiles"
+os.makedirs(STATIC_ROOT, exist_ok=True)  # ensure folder exists
+
+
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 #STATICFILES_DIRS = [
     #os.path.join(BASE_DIR, "static"),
@@ -136,8 +151,13 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 
 STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "LOCATION": MEDIA_ROOT,
+    },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "LOCATION": STATIC_ROOT,
     },
 }
 # Default primary key field type
