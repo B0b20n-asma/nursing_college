@@ -148,7 +148,22 @@
         {% endif %}
       </nav>
     </aside>
-
+    <!-- Main content -->
+    <main class="main-content col">
+      {% block content %}
+        <div class="page-header mb-3">
+          <h3 class="m-0">{% block page_heading %}Dashboard{% endblock %}</h3>
+        </div>
+         <div class="row">
+          <div class="col-12">
+            <div class="card dashboard-card p-3">
+              <h5>Welcome</h5>
+              <p class="mb-0">Use this base template for pages inside the Nursing College admin app.</p>
+            </div>
+          </div>
+        </div>
+      {% endblock %}
+    </main>
     
   </div>
 </div>
