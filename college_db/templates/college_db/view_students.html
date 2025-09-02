@@ -3,25 +3,30 @@
 {% extends 'college_db/base.html' %}
 {% block title %}Students{% endblock %}
 
+{% block extra_css %}
+<!-- DataTables CSS -->
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css">
+{% endblock %}
+
 {% block extra_js %}
+<!-- jQuery + DataTables -->
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
 <script>
-  // Optional: toggle icon when collapse opens/closes
-  document.addEventListener('DOMContentLoaded', function () {
-    document.querySelectorAll('[data-bs-toggle="collapse"]').forEach(function(btn){
-      btn.addEventListener('click', function(){
-        const icon = this.querySelector('.toggle-icon');
-        const target = document.querySelector(this.getAttribute('data-bs-target'));
-        // Delay to let bootstrap finish toggling
-        setTimeout(() => {
-          if (target.classList.contains('show')) {
-            icon.classList.remove('fa-plus-circle');
-            icon.classList.add('fa-minus-circle');
-          } else {
-            icon.classList.remove('fa-minus-circle');
-            icon.classList.add('fa-plus-circle');
-          }
-        }, 150);
-      });
+  $(document).ready(function() {
+    $('#studentsTable').DataTable({
+      dom: 'Bfrtip',
+      buttons: [
+        'copy', 'excel', 'pdf', 'print'
+      ]
     });
   });
 </script>
@@ -30,7 +35,7 @@
 {% block content %}
 <div class="page-header">
   <h3>Students</h3>
-  <p class="text-muted">All registered students. Click "Details" to expand.</p>
+  <p class="text-muted">All registered students. Use search or export features below.</p>
 </div>
 
 <div class="mb-3 d-flex justify-content-between">
@@ -38,14 +43,11 @@
     <a href="{% url 'add_student' %}" class="btn btn-primary"><i class="fas fa-user-plus"></i> Add New Student</a>
     <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary ms-2"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
   </div>
-  <div>
-    <!-- placeholder for search or filters later -->
-  </div>
 </div>
 
 <div class="card p-3">
   <div class="table-responsive">
-    <table class="table align-middle">
+    <table id="studentsTable" class="table align-middle">
       <thead>
         <tr>
           <th>Admission</th>
@@ -60,105 +62,18 @@
       <tbody>
         {% for s in students %}
         <tr>
-          <tr>
-    <td class="align-middle">{{ s.admission_number }}</td>
-    <td class="align-middle">{{ s.first_name }} {{ s.last_name }}</td>
-    <td class="align-middle">{{ s.get_gender_display }}</td>
-    <td class="align-middle">{{ s.department }}</td>
-    <td class="align-middle">{{ s.academic_year }}</td>
-    <td class="align-middle">{{ s.status|capfirst }}</td>
-    <td class="align-middle">
-        <a class="btn btn-sm btn-light" href="{% url 'view_student' s.id %}" title="Open Page">
-            <i class="fas fa-eye"></i>
-        </a>
-        <button class="btn btn-sm btn-info" type="button" data-bs-toggle="collapse" 
-                data-bs-target="#studentDetails{{ s.id }}" title="Details">
-            <i class="fas fa-plus-circle toggle-icon"></i>
-        </button>
-        <a href="{% url 'edit_student' s.id %}" class="btn btn-sm btn-success" title="Edit">
-            <i class="fas fa-edit"></i>
-        </a>
-        <a href="{% url 'delete_student' s.id %}" class="btn btn-sm btn-danger" title="Delete">
-            <i class="fas fa-trash"></i>
-        </a>
-    </td>
-</tr>
-
-        <tr class="collapse-row">
-          <td colspan="7" class="p-0">
-            <div class="collapse" id="studentDetails{{ s.id }}">
-              <div class="card card-body">
-                <div class="row">
-                  <div class="col-md-3">
-                    <div class="border rounded p-3 text-center text-muted">
-                  <i class="fas fa-user-graduate fa-2x mb-2"></i>
-                   <div>Photo disabled</div>
-                    </div>
-                    <p><strong>Admission:</strong> {{ s.admission_number }}</p>
-                    <p><strong>Phone:</strong> {{ s.phone|default:'-' }}</p>
-                    <p><strong>Email:</strong> {{ s.email|default:'-' }}</p>
-                    <p><strong>Status:</strong> {{ s.status|capfirst }}</p>
-                  </div>
-
-                  <div class="col-md-9">
-                    <h5 class="mb-2">Profile</h5>
-                    <p><strong>Full Name:</strong> {{ s.first_name }} {{ s.last_name }}</p>
-                    <p><strong>Gender:</strong> {{ s.get_gender_display }}</p>
-                    <p><strong>Date of Birth:</strong> {{ s.date_of_birth|date:"j M Y" }}</p>
-                    <p><strong>Department:</strong> {{ s.department }}</p>
-                    <p><strong>Academic Year:</strong> {{ s.academic_year }}</p>
-                    <p><strong>Address:</strong> {{ s.address|default:'-' }}</p>
-
-                    <hr>
-                    <div class="row">
-                      <div class="col-md-6">
-                        <h6>Enrollments</h6>
-                        <ul class="mb-3">
-                          {% for e in s.enrollments.all %}
-                            <li>{{ e.course }} — {{ e.academic_year }}{% if e.grade %} — Grade: {{ e.grade }}{% endif %}</li>
-                          {% empty %}
-                            <li class="text-muted">No enrollments</li>
-                          {% endfor %}
-                        </ul>
-                      </div>
-
-                      <div class="col-md-6">
-                        <h6>Fees</h6>
-                        <ul class="mb-3">
-                          {% for f in s.fees.all %}
-                            <li>
-                              {{ f.amount }} — Due {{ f.due_date|date:"j M Y" }} — 
-                              {% if f.paid %}<span class="badge bg-success">Paid</span>{% else %}<span class="badge bg-warning text-dark">Unpaid</span>{% endif %}
-                            </li>
-                          {% empty %}
-                            <li class="text-muted">No fee records</li>
-                          {% endfor %}
-                        </ul>
-                      </div>
-                    </div>
-
-                    <h6>Recent Attendance</h6>
-                    <ul>
-                      {% for a in s.attendance_set.all|slice:":8" %}
-                        <li>{{ a.date|date:"j M Y" }} — {{ a.course }} — {{ a.present|yesno:"Present,Absent" }}</li>
-                      {% empty %}
-                        <li class="text-muted">No attendance recorded</li>
-                      {% endfor %}
-                    </ul>
-
-                    <div class="mt-3">
-                      <a href="{% url 'view_student' s.id %}" class="btn btn-outline-primary btn-sm"><i class="fas fa-external-link-alt"></i> Open full page</a>
-                      <a href="{% url 'edit_student' s.id %}" class="btn btn-success btn-sm">Edit</a>
-                      <a href="{% url 'delete_student' s.id %}" class="btn btn-danger btn-sm">Delete</a>
-                    </div>
-
-                  </div>
-                </div>
-              </div>
-            </div>
+          <td>{{ s.admission_number }}</td>
+          <td>{{ s.first_name }} {{ s.last_name }}</td>
+          <td>{{ s.get_gender_display }}</td>
+          <td>{{ s.department }}</td>
+          <td>{{ s.academic_year }}</td>
+          <td>{{ s.status|capfirst }}</td>
+          <td>
+            <a class="btn btn-sm btn-light" href="{% url 'view_student' s.id %}" title="Open Page"><i class="fas fa-eye"></i></a>
+            <a href="{% url 'edit_student' s.id %}" class="btn btn-sm btn-success"><i class="fas fa-edit"></i></a>
+            <a href="{% url 'delete_student' s.id %}" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></a>
           </td>
         </tr>
-
         {% empty %}
         <tr>
           <td colspan="7" class="text-center text-muted">No students found.</td>
@@ -168,5 +83,4 @@
     </table>
   </div>
 </div>
-
-{% endblock %}
+{% endblock %} 
