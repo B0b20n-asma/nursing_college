@@ -74,9 +74,7 @@ class Student(models.Model):
     address = models.TextField(blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='active')
     department = models.CharField(max_length=200, blank=True, null=True)
-    # Change from ForeignKey to CharField
     academic_year = models.CharField(max_length=50, blank=True, null=True)
-    photo = models.ImageField(upload_to='students/photos/', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

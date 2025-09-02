@@ -90,14 +90,10 @@
               <div class="card card-body">
                 <div class="row">
                   <div class="col-md-3">
-                    {% if s.photo %}
-                      <img src="{{ s.photo.url }}" class="img-fluid rounded mb-2" alt="Photo of {{ s.first_name }}">
-                    {% else %}
-                      <div class="border rounded p-3 text-center text-muted">
-                        <i class="fas fa-user-graduate fa-2x mb-2"></i>
-                        <div>No photo</div>
-                      </div>
-                    {% endif %}
+                    <div class="border rounded p-3 text-center text-muted">
+                  <i class="fas fa-user-graduate fa-2x mb-2"></i>
+                   <div>Photo disabled</div>
+                    </div>
                     <p><strong>Admission:</strong> {{ s.admission_number }}</p>
                     <p><strong>Phone:</strong> {{ s.phone|default:'-' }}</p>
                     <p><strong>Email:</strong> {{ s.email|default:'-' }}</p>
