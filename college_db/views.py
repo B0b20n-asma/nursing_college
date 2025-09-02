@@ -486,8 +486,8 @@ def add_enrollment(request, student_id):
         'student': student
     })
 
-def student_pdf(request, student_id):
-    student = get_object_or_404(Student, id=student_id)
+def student_pdf(request, pk):
+    student = get_object_or_404(Student, id=pk)
 
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="student_{student.admission_number}.pdf"'
@@ -507,4 +507,3 @@ def student_pdf(request, student_id):
     p.save()
 
     return response
-
